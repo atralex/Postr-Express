@@ -28,5 +28,13 @@ class User {
     getPdw(){
         return this.pdw;
     }
-
+    getUser(){
+        return {
+            id: this.getId(),
+            username: this.getUsername(),
+            pdw: this.getPdw()
+        }
+    }
 }
+
+export default User;
