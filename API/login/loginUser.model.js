@@ -29,4 +29,4 @@ class LoginUser {
     }
 }
 
-export default LoginUser;
+module.exports = LoginUser;

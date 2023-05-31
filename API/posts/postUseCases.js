@@ -1,15 +1,21 @@
-import Post from "./post.model";
-export const postUseCase = {
+const Post = require('./post.model');
+const db = require('../dbConnection/dbUseCases');
+
+const postUseCase = {
     addPost: async (username, content) => {
         return await db.addPost(username, content);
     },
 
     getPostByUsername: async (username) => {
         let posts = []
-        let rawPosts = db.getPostByUsername(username)
+        let rawPosts = await db.getPostByUsername(username)
+        console.log(rawPosts)
         rawPosts.map((rawPost)=> {
-            let post = Post(rawPost[0], rawPost[1], rawPost[2]);
+            let post = new Post(rawPost.id, rawPost.user_id, rawPost.content);
             posts.push(post);
         })
+        return posts;
     }
 }
+
+module.exports = postUseCase;

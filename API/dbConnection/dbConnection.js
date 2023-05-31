@@ -9,4 +9,4 @@ const pool = mariadb.createPool(
     });
 
 
-export default pool;
+module.exports = pool;

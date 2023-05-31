@@ -1,7 +1,8 @@
-import LoginUser from "./loginUser.model";
-import {db} from "../dbConnection/dbUseCases";
+const db = require('../dbConnection/dbUseCases');
+const LoginUser = require('./loginUser.model');
 
-export const login = {
+
+const login = {
     login: async (username, pdw) => {
         let newUser = new LoginUser(username, pdw);
         const responseLogin = await db.loginUser(newUser.getUsername(), newUser.getPdw());
@@ -15,3 +16,5 @@ export const login = {
         }
     },
 }
+
+module.exports = login;

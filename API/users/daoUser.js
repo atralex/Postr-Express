@@ -1,19 +1,17 @@
-import {db} from "../dbConnection/dbUseCases";
-import User from "./user.model";
-export const daoUser = {
+const db = require('../dbConnection/dbUseCases');
+const User = require('./user.model');
+
+const daoUser = {
     getUsers: async () => {
-        let users = []
-        let data = await db.getAllUsers();
-        data.map((rawUser)=> {
-            let user = new User;
-            listUser(user, rawUser)
-            const adaptedUser = user.getUser();
-            users.push(adaptedUser);
-        })
+        let newUsers = [];
+        let users = await db.getAllUsers();
+        console.log(users);
+        users.map((user) => {
+            let newUser = new User(user.id, user.username, user.pdw);
+            newUsers.push(newUser);
+        });
+        return newUsers;
     },
 }
-function listUser(usuario, row) {
-    usuario.setId(row[0]);
-    usuario.setUsername(row[1]);
-    usuario.setPdw(row[2]);
-}
+
+module.exports = daoUser;

@@ -1,15 +1,16 @@
-import pool from "./dbConnection";
-import {json} from "express";
+const json = require('express').json;
+const status = require('express').status;
+const pool = require('./dbConnection');
 
-export const db = {
+const db = {
     getAllUsers: async () => {
         let conn = await pool.getConnection();
         try {
             const listaDeUsuarios = await conn.execute('SELECT * FROM usuarios;');
-            return json(listaDeUsuarios);
+            return listaDeUsuarios;
         } catch (err) {
             console.error(err);
-            return (status(500).json({ error: 'Error al obtener los datos de la base de datos' }));
+            return (err);
         } finally {
             if (conn) await conn.end();
         }
@@ -23,7 +24,8 @@ export const db = {
                 return json({status: 200, usuario: username});
             }
         } catch (err) {
-            return status(500).json(err= 'Error al hacer login');
+            console.error(err);
+            return (err);
         } finally {
             if (conn) await conn.end();
         }
@@ -33,9 +35,10 @@ export const db = {
         try {
             await conn.execute('INSERT INTO `usuarios` (id, username, pdw) VALUES (NULL, ?, ?);', [username, pdw]);
             await conn.commit()
-            return status(200).json('Exito al Registrar Usuario');
+            return {status: 200, usuario: username};
         } catch (err) {
-            return status(500).json(err= 'Error al hacer login');
+            console.error(err);
+            return (err);
         } finally {
             if (conn) await conn.end();
         }
@@ -52,21 +55,26 @@ export const db = {
                 message: 'Post añadido con exito'
             }
         } catch (err) {
-            return status(500).json(err= 'Error al hacer login');
+            console.error(err);
+            return (err);
         } finally {
             if (conn) await conn.end();
         }
     },
     getPostByUsername: async (username) =>{
-        let conn = await pool.getConnection()
+        let conn = await pool.getConnection();
         try {
             let user = await conn.execute('SELECT * FROM `usuarios` WHERE username=?;', [username]);
-            let userId = user[0][0]
+            let userId = user[0].id
+            console.log(userId)
             return await conn.execute('SELECT * FROM `tweets` WHERE user_id=?;', [userId]);
         } catch (err) {
-            return status(500).json(err= 'Error al hacer login');
+            console.error(err);
+            return (err);
         } finally {
             if (conn) await conn.end();
         }
     },
 }
+
+module.exports = db;
