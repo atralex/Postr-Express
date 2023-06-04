@@ -3,6 +3,7 @@ const db = require('../dbConnection/dbUseCases');
 
 const postUseCase = {
     addPost: async (username, content) => {
+        console.log(username, content)
         return await db.addPost(username, content);
     },
 

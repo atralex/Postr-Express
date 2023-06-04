@@ -21,13 +21,29 @@ const db = {
         try{
             const resultadoLogin = await conn.execute('SELECT * FROM `usuarios` WHERE username=? AND pdw=?;', [username, pdw]);
             if (resultadoLogin.length !== 0){
-                return json({status: 200, usuario: username});
+                return {status: 200, usuario: username};
             }
         } catch (err) {
             console.error(err);
             return (err);
         } finally {
             if (conn) await conn.end();
+        }
+    },
+    tryGetUser: async (username) => {
+      let conn = await pool.getConnection();
+        try {
+            const resultadoLogin = await conn.execute('SELECT * FROM `usuarios` WHERE username=?;', [username]);
+            console.log(resultadoLogin)
+            if (resultadoLogin.length === 0){
+                console.log("no existe el usuario");
+                return {status: 404};
+            } else {
+                return {status: 200, usuario: username};
+            }
+        } catch (err) {
+            console.error(err);
+            return (err);
         }
     },
     addUser: async (username, pdw) => {
@@ -47,7 +63,8 @@ const db = {
         let conn = await pool.getConnection()
         try {
             let user = await conn.execute('SELECT * FROM usuarios WHERE username=?', [username]);
-            let userId = user[0][0]
+            let userId = user[0].id
+            console.log(userId)
             await conn.execute('INSERT INTO tweets (`id`, `user_id`, `content`, `fecha_creacion`) VALUES (NULL, ?, ?, current_timestamp());', [userId, content]);
             await conn.commit()
             return {

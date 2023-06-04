@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const daoUser = require('../API/users/daoUser');
 const registerUseCases = require('../API/register/register.useCases');
+const loginUseCases = require('../API/login/daoLogin');
 const {json} = require("express");
 
 
@@ -15,6 +16,13 @@ router.post('/', async function(req, res, next) {
   const {username, pdw} = req.body;
   let newUser = await registerUseCases.registerUser(username, pdw);
     res.send(newUser);
+});
+
+router.post('/login', async function(req, res, next) {
+  const {username, pdw} = req.body;
+  let login = await loginUseCases.login(username, pdw);
+  console.log(login)
+  res.send(login);
 });
 
 module.exports = router;
